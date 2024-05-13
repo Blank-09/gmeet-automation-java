@@ -12,7 +12,6 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
@@ -165,7 +164,12 @@ class AppTest {
 
         LocalDate today = LocalDate.now();
         if (lastRunDate == null || !lastRunDate.equals(today)) {
-            dayOrder = (dayOrder + 1) % 6; // Increment day order if new day
+            //Increment day order
+            dayOrder++;
+            if(dayOrder > 5)
+            {
+                dayOrder = 1;
+            }
             lastRunDate = today;
         }
 
@@ -200,21 +204,22 @@ class AppTest {
                 logger.info("Meet Link: " + meetLink);
                 driver.navigate().to(meetLink);
 
-                // Interactions to mute and disable camera
-                Thread.sleep(1000);
+                // Interactions to mute mic
+                Thread.sleep(2000);
                 actions.keyDown(Keys.CONTROL).sendKeys("d").keyUp(Keys.CONTROL).perform();
-
-                // Join the meeting after 1 minute
-                Thread.sleep(1000 * 60);
-                driver.findElement(By.xpath("/html/body/div[1]/c-wiz/div/div/div[25]/div[3]/div/div[2]/div[4]/div/div/div[2]/div[1]/div[2]/div[1]/div[1]/button")).click();
+                
+                // Interactions to turn off camera
+                // Thread.sleep(2000);
+                // actions.keyDown(Keys.CONTROL).sendKeys("e").keyUp(Keys.CONTROL).perform();
 
                 // Wait for the class to end
                 long secondsUntilClassEnds = ChronoUnit.SECONDS.between(currentTime, classStartTime.plusHours(1));
                 Thread.sleep(secondsUntilClassEnds * 1000);
 
                 //Leave the meeting
-                driver.findElement(By.xpath("/html/body/div[1]/c-wiz/div[1]/div/div[24]/div[3]/div[10]/div/div/div[2]/div/div[8]/span/button")).click();
+                driver.findElement(By.cssSelector("button[aria-label='Leave call']")).click();
                 logger.info("Left the meeting: " + subject);
+
             } else {
                 logger.warn("No meet link found for subject: " + subject);
             }

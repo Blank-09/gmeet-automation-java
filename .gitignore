@@ -2,3 +2,4 @@ target/
 out/
 AppData/
 src/test/resources/config.properties
+assets\day_order.txt
